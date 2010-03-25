@@ -69,9 +69,19 @@ class SVNRepo:
 	max_revision = property(_get_max_revision)
 	def get_commit(self, revision):
 		"""Get info about a specific commit"""
-		print _get_commit(self.url, revision)
+		return _get_commit(self.url, revision)
+	def get_revisions_since(self, datetime):
+		rev = self.max_revision
+		info = self.get_commit(rev)
+		revs = list()
+		while info['date'] > datetime:
+			revs.append(rev)
+			rev -= 1
+			info = self.get_commit(rev)
+		return revs
 
 if __name__ == "__main__":
 	R = SVNRepo("svn+ssh://zwinkau@ssh.info.uni-karlsruhe.de/ben/firm/svn")
-	print R.get_commit(R.max_revision)
+	R.get_commit(R.max_revision)
+	print R.get_revisions_since(datetime(2010,3,20))
 
