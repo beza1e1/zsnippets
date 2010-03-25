@@ -1,3 +1,12 @@
+def powerset(seq): 
+	"""Returns all the subsets of this set. This is a generator.""" 
+	if seq: 
+		for item in powerset(seq[1:]): 
+			yield [seq[0]]+item 
+			yield item 
+	else: 
+		yield seq
+
 def combinations(dic):
 	dic = dic.items()
 	number = [0] * len(dic)
@@ -21,9 +30,10 @@ def combinations(dic):
 			break
 
 if __name__ == "__main__":
+	lis = list(powerset([11, 42, 1337]))
 	dic = {
 		'day': ('monday', 'tuesday', 'wednesday'),
-		'number': (11, 42, 1337),
+		'number': lis,
 		'name': ('John', 'Max')
 	}
 	for c in combinations(dic):
