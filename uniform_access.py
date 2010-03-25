@@ -6,6 +6,8 @@ This can not be mad really equal in Python, but we can allow o.foo, by disallowi
 class ua_object(object):
 	def __setattr__(self, key, value):
 		if callable(value) and value.func_code.co_argcount == 1:
+			if key in self.__dict__:
+				del self.__dict__[key]
 			bmethod = value.__get__(self, type(self))
 			self.__dict__["__ua_"+key] = bmethod
 		else:
