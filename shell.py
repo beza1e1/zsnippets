@@ -4,7 +4,7 @@ Alternative to subprocess and os.system
 """
 import subprocess
 
-def execute(cmd, stderr=False, stdout=False):
+def execute(cmd, stderr=True, stdout=True):
 	"""Execute a shell command and return stderr and/or stdout data"""
 	out, err = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 	try:

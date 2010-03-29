@@ -2,20 +2,9 @@
 Alternative svn library for some easy utility functions
 """
 import os
-import subprocess
+from shell import execute
 from datetime import datetime
 os.environ['LANG'] = "C" # unify output to english
-
-def _my_system(cmd):
-	"""Execute a shell command and return stderr and stdout data"""
-	stdout, stderr = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-	try:
-		for line in stderr.split('\n'):
-			yield line
-		for line in stdout.split('\n'):
-			yield line
-	except Exception as e:
-		print "'%s' -> %s" % (c, e)
 
 _INFO_KEYS = {
 	"Path: ": 'path',
@@ -29,16 +18,16 @@ _INFO_KEYS = {
 }
 def _get_info(svn_url):
 	info = dict()
-	for line in _my_system("svn info "+svn_url):
+	for line in execute("svn info "+svn_url):
 		for start, key in _INFO_KEYS.items():
 			if line.startswith(start):
 				info[key] = line[len(start):]
 	return info
 
 def _get_commit(svn_url, revision):
-	diff = "\n".join(_my_system("svn diff -c%d %s" % (revision, svn_url)))
+	diff = "\n".join(execute("svn diff -c%d %s" % (revision, svn_url)))
 	commit = dict(diff=diff)
-	lines = _my_system("svn log -c%d %s" % (revision, svn_url))
+	lines = execute("svn log -c%d %s" % (revision, svn_url))
 	while not lines.next().startswith("---"):
 		pass
 	status_line = lines.next()
