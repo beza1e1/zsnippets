@@ -18,16 +18,16 @@ _INFO_KEYS = {
 }
 def _get_info(svn_url):
 	info = dict()
-	for line in execute("svn info "+svn_url):
+	for line in execute("svn info "+svn_url, stdout=True):
 		for start, key in _INFO_KEYS.items():
 			if line.startswith(start):
 				info[key] = line[len(start):]
 	return info
 
 def _get_commit(svn_url, revision):
-	diff = "\n".join(execute("svn diff -c%d %s" % (revision, svn_url)))
+	diff = "\n".join(execute("svn diff -c%d %s" % (revision, svn_url), stdout=True))
 	commit = dict(diff=diff)
-	lines = execute("svn log -c%d %s" % (revision, svn_url))
+	lines = execute("svn log -c%d %s" % (revision, svn_url), stdout=True)
 	while not lines.next().startswith("---"):
 		pass
 	status_line = lines.next()
