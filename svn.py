@@ -56,11 +56,26 @@ def _get_commit(svn_url, revision):
 		line = lines.next()
 	commit['message'] = "\n".join(msg)
 	return commit
+	
+def htmlize_diff(diff):
+	lines = []
+	for line in diff.split("\n"):
+		if line.startswith("+++") or line.startswith("---") or line.startswith("===") or line.startswith("Index"):
+			line = '<span class="meta">%s</span>' % line
+		elif line.startswith("+"):
+			line = '<span class="add">%s</span>' % line
+		elif line.startswith("-"):
+			line = '<span class="remove">%s</span>' % line
+		elif line.startswith("@@"):
+			line = '<span class="jump">%s</span>' % line
+		lines.append(line)
+	return "\n".join(lines)
 
 class SVNRepo:
 	def __init__(self, url):
 		self.url = _get_info(url)['root_url']
 		self.update()
+		self._commit_cache = dict()
 	def update(self):
 		"""Update repository information"""
 		self.info = _get_info(self.url)
@@ -69,7 +84,12 @@ class SVNRepo:
 	max_revision = property(_get_max_revision)
 	def get_commit(self, revision):
 		"""Get info about a specific commit"""
-		return _get_commit(self.url, revision)
+		if revision in self._commit_cache:
+			return self._commit_cache[revision]
+		else:
+			c = _get_commit(self.url, revision)
+			self._commit_cache[revision] = c
+			return c
 	def get_revisions_since(self, datetime):
 		rev = self.max_revision
 		info = self.get_commit(rev)
