@@ -34,27 +34,33 @@ def add_worker(n=1):
 	return t
 	
 _BASE_WORKER = None
-def future(func, *args, **kwargs):
-	"""Returns a promise of the result of func()"""
+
+def _keep_base_worker_alive():
+	"""At least one thread should work on the promises"""
 	global _BASE_WORKER
-	p = Promise(lambda: func(*args, **kwargs))
-	_PROMISES.append(p)
 	if not _BASE_WORKER or not _BASE_WORKER.isAlive():
 		_BASE_WORKER = add_worker()
+	threading.Timer(10.0, _keep_base_worker_alive)
+_keep_base_worker_alive()
+
+def future(func, *args, **kwargs):
+	"""Returns a promise of the result of func()"""
+	p = Promise(lambda: func(*args, **kwargs))
+	_PROMISES.append(p)
 	#print len(_PROMISES), _BASE_WORKER
 	return p
 
 if __name__ == "__main__":
-	import sys
+	import sys, time
 	extra_threads = 0
 	if len(sys.argv) > 1:
 		extra_threads = int(sys.argv[1])
 	S = 0
-	end = 1000
+	end = 20
 	def add(i):
 		global S
 		S += i
-		sum(range(100000))
+		time.sleep(1.0)
 	promises = []
 	for i in range(end):
 		promises.append( future(add, i) )
