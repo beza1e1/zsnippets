@@ -62,7 +62,7 @@ def _get_logs(svn_url):
 			except ValueError:
 				pass
 	while r:
-		for line in execute("svn log -r%d:%d %s" % (r-BLOCK_SIZE, r, svn_url)):
+		for line in execute("svn log -r%d:%d %s" % (r, r-BLOCK_SIZE, svn_url)):
 			if line.startswith("r"):
 				try:
 					radl = _read_status_line(line)
