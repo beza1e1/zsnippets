@@ -15,6 +15,9 @@ def googlechart_url(**kwargs):
 			maxd = max(maxd, d)
 			mind = min(mind, d)
 	args.append('chds=%d,%d' % (mind, maxd))
+	args.append('chxt=y')
+	steps = int((maxd / float(height)) * 20)
+	args.append('chxr=0,0,%d,%d' % (maxd, steps))
 	def _data_line(lst):
 		return ",".join(map(str, lst))
 	data = "|".join(map(_data_line, data))
@@ -29,3 +32,5 @@ def googlechart_url(**kwargs):
 	args = "&".join(args)
 	return url + args
 
+
+print googlechart_url()
