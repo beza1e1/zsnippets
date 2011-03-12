@@ -74,4 +74,3 @@ if __name__ == "__main__":
 		print line
 	for line in execute("hostname", True, True):
 		print line
-	
