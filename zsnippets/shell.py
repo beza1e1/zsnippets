@@ -44,12 +44,12 @@ def execute(cmd, env=None, timeout=0, stderr=subprocess.STDOUT):
 		for line in out.splitlines():
 			yield line
 	except Exception, e:
-		print "'%s' -> %s" % (c, e)
+		print "'%s' -> %s" % (cmd, e)
 	if proc.returncode in _EXIT_CODES:
 		raise SigKill(proc.returncode, _EXIT_CODES[proc.returncode])
 	elif proc.returncode < 0: # program aborted
 		raise Exception(proc.returncode, cmd)
-	
+
 def silent_shell(cmd, env=None, debug=False):
 	"""Execute a shell command"""
 	if debug:
@@ -63,7 +63,7 @@ def silent_shell(cmd, env=None, debug=False):
 	    return subprocess.call(cmd, shell=True, stdout=stdout, stderr=stderr, env=env)
 	except OSError, e:
 	    print >>sys.stderr, "Execution failed:", e
-	
+
 def write_file(filename, content):
 	fh = open(filename, 'w')
 	fh.write(content)
